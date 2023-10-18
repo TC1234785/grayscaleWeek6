@@ -1,4 +1,3 @@
-const path = require("path");
 /*
  * Project: Milestone 1
  * File Name: main.js
@@ -8,7 +7,7 @@ const path = require("path");
  * Author:
  *
  */
-
+const path = require("path");
 const IOhandler = require("./IOhandler");
 const zipFilePath = path.join(__dirname, "myfile.zip");
 const pathUnzipped = path.join(__dirname, "unzipped");
@@ -21,19 +20,13 @@ const fs = require("fs");
 //Steap 4: Send them to the grayscale filter function
 //Step 5: After ALL IMAGES have SUCCESSFULLY been grayscaled, show a success message
 //ALL ERRORS MUST SHOW IN .catch in PROMISE CHAIN
-["img1.png", "img2.png", "img3.png"].forEach(img => {grayScale(img);});
+IOhandler.unzip(zipFilePath, pathUnzipped)
+    .then(()=> IOhandler.readDir(pathUnzipped))
+    .then((PNGs) => {
+                        Promise.all([IOhandler.grayScale(path.join(pathUnzipped,PNGs[0]),path.join(pathProcessed,PNGs[0])), 
+                                     IOhandler.grayScale(path.join(pathUnzipped,PNGs[1]),path.join(pathProcessed,PNGs[1])),
+                                     IOhandler.grayScale(path.join(pathUnzipped,PNGs[2]),path.join(pathProcessed,PNGs[2]))
+                                        .then((GreyScaled)=> console.log("All images grey scaled"))])
+                        })
+    .catch((err) => console.log(err));
 
-[grayScale("img1.png"), grayScale("img2.png"), grayScale("img3.png")]
-.then(() => console.log("All images done!")) // look for promise.all()
-
-
-//Step 1: Unzip myfile.zip
-//transform stream needs to be converted to a writeable stream
-const zlib = require("zlib");
-const ts = zlib.createGunzip() //ts = transformed stream
-fs.createReadStream(zipFilePath)//create readstream
-.pipe(unzipper.Extract({path:"./unzipped"})) //pipe to unzipper to create a transformed stream
-
-//Read each png fie
-fs.createReadStream("png1.png")
-.on("data", (chunk) => console.log(chunk))
